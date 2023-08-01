@@ -1,0 +1,4 @@
+C:\Users\paula.lafon\projects\learning\learndotnet\webapp\examples\MinimalJwtAngular\obj\Debug\MinimalJwtAngular.esproj.SuggestedBindingRedirects.cache
+C:\Users\paula.lafon\projects\learning\learndotnet\webapp\examples\MinimalJwtAngular\obj\Debug\MinimalJwtAngular.esproj.CoreCompileInputs.cache
+C:\Users\paula.lafon\projects\learning\learndotnet\webapp\minimaljwt\MinimalJwtAngular\obj\Debug\MinimalJwtAngular.esproj.SuggestedBindingRedirects.cache
+C:\Users\paula.lafon\projects\learning\learndotnet\webapp\minimaljwt\MinimalJwtAngular\obj\Debug\MinimalJwtAngular.esproj.CoreCompileInputs.cache

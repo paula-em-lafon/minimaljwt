@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33723.286
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinimalJwt", "MinimalJwt.csproj", "{62FAA477-DFFF-4108-886A-C12109B92F4B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinimalJwtAuth", "..\MinimalJwtAuth\MinimalJwtAuth.csproj", "{A7B8BC38-B03A-41EB-A3EE-91226CB5F23B}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "MinimalJwtAngular", "..\MinimalJwtAngular\MinimalJwtAngular.esproj", "{2C74E5A7-EB3B-47C3-B448-9C078D5F6411}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{62FAA477-DFFF-4108-886A-C12109B92F4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62FAA477-DFFF-4108-886A-C12109B92F4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62FAA477-DFFF-4108-886A-C12109B92F4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62FAA477-DFFF-4108-886A-C12109B92F4B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7B8BC38-B03A-41EB-A3EE-91226CB5F23B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7B8BC38-B03A-41EB-A3EE-91226CB5F23B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7B8BC38-B03A-41EB-A3EE-91226CB5F23B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7B8BC38-B03A-41EB-A3EE-91226CB5F23B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C74E5A7-EB3B-47C3-B448-9C078D5F6411}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C74E5A7-EB3B-47C3-B448-9C078D5F6411}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C74E5A7-EB3B-47C3-B448-9C078D5F6411}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{2C74E5A7-EB3B-47C3-B448-9C078D5F6411}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C74E5A7-EB3B-47C3-B448-9C078D5F6411}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C74E5A7-EB3B-47C3-B448-9C078D5F6411}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1E7B8927-238C-4007-A12B-69FD9003000C}
+	EndGlobalSection
+EndGlobal

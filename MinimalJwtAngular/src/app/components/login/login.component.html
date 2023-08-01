@@ -1,0 +1,27 @@
+
+
+<ul class="nav navbar-nav flex-row justify-content-between ml-auto">
+  <li *ngIf="isLoggedIn">
+    it's friday I'm in love
+  </li>
+
+  <li class="nav-item order-2 order-md-1"><a href="#" class="nav-link" title="settings"><i class="fa fa-cog fa-fw fa-lg"></i></a></li>
+  <li class="dropdown order-1">
+    <button type="button" id="dropdownMenu1" *ngIf="!isLoggedIn" data-toggle="dropdown" class="btn btn-outline-secondary dropdown-toggle">Login <span class="caret"></span></button>
+    <ul  *ngIf="!isLoggedIn" class="dropdown-menu dropdown-menu-right mt-1">
+      <li class="p-3">
+        <form class="form" role="form" (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm">
+          <div class="form-group">
+            <input id="username" name="username" placeholder="Username" class="form-control form-control-sm" type="text" [(ngModel)]="form.username" required #username="ngModel" [ngClass]="{ 'is-invalid': f.submitted && username.errors }">
+          </div>
+          <div class="form-group">
+            <input id="password" placeholder="Password" class="form-control form-control-sm" name="password" type="password" required [(ngModel)]="form.password" #password="ngModel" [ngClass]="{ 'is-invalid': f.submitted && password.errors }">
+          </div>
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-block">Login</button>
+          </div>
+        </form>
+      </li>
+    </ul>
+  </li>
+</ul>
