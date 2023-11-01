@@ -1,4 +1,5 @@
-﻿*.swp
+﻿appsettings.json
+*.swp
 *.*~
 project.lock.json
 .DS_Store

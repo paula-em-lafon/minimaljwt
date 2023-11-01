@@ -1,10 +1,14 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using MinimalJwtAuth.Exceptions;
 using MinimalJwtAuth.Models;
 using MinimalJwtAuth.Services;
+using System.Dynamic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 
@@ -53,7 +57,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     {
         ValidateActor = true,
         ValidateAudience = true,
-        ValidateLifetime = true,
+        ValidateLifetime = false,
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
@@ -113,6 +117,17 @@ app.MapGet("/getUser",
 (IUserService service) => GetUser(service))
     .Produces<IEnumerable<String>>(statusCode: 200, contentType: "application/json");
 
+app.MapPost("/create",
+     (User user, IUserService service) => Create(user, service))
+    .Produces<User>();
+
+app.MapPut("/update",
+     (User user, IUserService service) => Update(user, service))
+    .Produces<User>();
+
+app.MapDelete("/delete",
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+(IUserService service) => Delete(service));
 //app.MapGet("/list",
 //    (IMovieService service) => List(service))
 //    .Produces<List<Movie>>(statusCode: 200, contentType: "application/json");
@@ -138,6 +153,7 @@ IResult Login(UserLogin user, IUserService service)
 
         var claims = new[]
         {
+            new Claim(ClaimTypes.Sid, loggedInUser.Id.ToString()),
             new Claim(ClaimTypes.NameIdentifier, loggedInUser.Username),
             new Claim(ClaimTypes.Email, loggedInUser.EmailAddress),
             new Claim(ClaimTypes.GivenName, loggedInUser.GivenName),
@@ -164,6 +180,7 @@ IResult Login(UserLogin user, IUserService service)
 
         var returnable = new LoggedIn
         {
+            Id = loggedInUser.Id,
             Token = tokenString,
             TokenExpiry = tokenExpiry,
             RefreshToken = loggedInUser.RefreshToken,
@@ -182,7 +199,7 @@ IResult Login(UserLogin user, IUserService service)
 
 IResult RefreshToken(OldRefreshToken oldRefreshToken, IUserService service)
 {
-    var loggedInUser = service.GetCurrentUser();
+    var loggedInUser = service.GetCurrentUserById();
     if (loggedInUser is null) return Results.NotFound("User not found");
 
 
@@ -192,6 +209,7 @@ IResult RefreshToken(OldRefreshToken oldRefreshToken, IUserService service)
 
     var claims = new[]
         {
+            new Claim(ClaimTypes.Sid, loggedInUser.Id.ToString()),
             new Claim(ClaimTypes.NameIdentifier, loggedInUser.Username),
             new Claim(ClaimTypes.Email, loggedInUser.EmailAddress),
             new Claim(ClaimTypes.GivenName, loggedInUser.GivenName),
@@ -218,6 +236,7 @@ IResult RefreshToken(OldRefreshToken oldRefreshToken, IUserService service)
 
     var returnable = new LoggedIn
     {
+        Id = loggedInUser.Id,
         Token = tokenString,
         TokenExpiry = tokenExpiry,
         RefreshToken = loggedInUser.RefreshToken,
@@ -235,9 +254,10 @@ IResult RefreshToken(OldRefreshToken oldRefreshToken, IUserService service)
 
 IResult GetUser(IUserService service)
 {
-    var user = service.GetCurrentUser();
+    var user = service.GetCurrentUserById();
     var returnable = new User
     {
+        Id = user.Id,
         Username = user.Username,
         EmailAddress = user.EmailAddress,
         GivenName = user.GivenName,
@@ -247,11 +267,52 @@ IResult GetUser(IUserService service)
     return Results.Ok(returnable);
 }
 
-//IResult Create(Movie movie, IMovieService service)
-//{
-//    var result = service.Create(movie);
-//    return Results.Ok(result);
-//}
+IResult Create(User user, IUserService service)
+{
+    try
+    {
+        var result = service.Create(user);
+        return Results.Ok(result);
+    }
+    catch (Exception ex)
+    {
+        if (ex is UserException)
+        {
+            return Results.Conflict(ex.Message);
+        }
+        else
+        {
+            return Results.Problem(ex.Message);
+        }
+    }
+}
+
+IResult Update(User newUser, IUserService service)
+{
+    try
+    {
+        var result = service.Update(newUser);
+        return Results.Ok(result);
+    }
+    catch (Exception ex)
+    {
+        if (ex is UserException)
+        {
+            return Results.Conflict(ex.Message);
+        }
+        else
+        {
+            return Results.Problem(ex.Message);
+        }
+    }
+}
+
+IResult Delete(IUserService service)
+{
+    var result = service.Delete();
+    if (!result) Results.BadRequest("Something went wrong");
+    return Results.Ok(result);
+}
 
 //IResult Get(int id, IMovieService service)
 //{

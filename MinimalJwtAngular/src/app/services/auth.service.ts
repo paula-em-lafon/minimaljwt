@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { StorageService } from './storage.service';
+import { User } from '../User';
 
 
 @Injectable({
@@ -51,5 +52,21 @@ export class AuthService {
       },
       
     )
+  }
+
+  create(user: User): Observable<User> {
+    return this.http.post<User>(this.userApiUrl + "/create", user)
+  }
+
+  getUser(): Observable<User> {
+    return this.http.get<User>(this.userApiUrl + "/getUser", { withCredentials: true })
+  }
+
+  updateUser(user: User): Observable<User> {
+    return this.http.put<User>(this.userApiUrl + "/update", user, { withCredentials: true })
+  }
+
+  deleteUser(): Observable<boolean> {
+    return this.http.delete<boolean>(this.userApiUrl + "/delete", { withCredentials: true })
   }
 }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
@@ -11,6 +12,8 @@ using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var connectionString = builder.Configuration.GetSection("ConnectionStrings")["MoviesContextDb"].ToString();
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -109,13 +112,12 @@ app.MapGet("/get",
     .Produces<Movie>();
 
 app.MapGet("/list",
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 (IMovieService service) => List(service))
     .Produces<List<Movie>>(statusCode: 200, contentType: "application/json");
 
 app.MapPut("/update",
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
-(Movie movie, IMovieService service) => Update(movie, service))
+(int id, Movie movie, IMovieService service) => Update(id, movie, service))
     .Accepts<Movie>("application/json")
     .Produces<Movie>(statusCode: 200, contentType: "application/json");
 
@@ -160,6 +162,7 @@ app.MapDelete("/delete",
 
 IResult Create(Movie movie, IMovieService service)
 {
+
     var result = service.Create(movie);
     return Results.Ok(result);
 }
@@ -178,9 +181,9 @@ IResult List(IMovieService service)
     return Results.Ok(movies);
 }
 
-IResult Update(Movie newMovie, IMovieService service)
+IResult Update(int id, Movie newMovie, IMovieService service)
 {
-    var updatedMovie = service.Create(newMovie);
+    var updatedMovie = service.Update(id, newMovie);
     
     if (updatedMovie == null) return Results.NotFound("Movie Not found");
     

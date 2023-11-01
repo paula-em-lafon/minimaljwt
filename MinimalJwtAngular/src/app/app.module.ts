@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router'
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { HttpClientModule } from '@angular/common/http'
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CookieService } from 'ngx-cookie-service';
 
 import { AppComponent } from './app.component';
@@ -16,6 +16,11 @@ import appRoutes from './routerConfig';
 import { LoginComponent } from './components/login/login.component';
 import { NeedloginComponent } from './components/needlogin/needlogin.component';
 import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt';
+import { CookieModule } from 'ngx-cookie';
+import { EditCreateFormComponent } from './components/edit-create-form/edit-create-form.component';
+import { CommonModule } from '@angular/common';
+import { NeedadminComponent } from './components/needadmin/needadmin.component';
+import { UserEditCreateComponent } from './components/user-edit-create/user-edit-create.component';
 
 @NgModule({
   declarations: [
@@ -25,14 +30,20 @@ import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt';
     MovieItemComponent,
     MoviePageComponent,
     LoginComponent,
-    NeedloginComponent
+    NeedloginComponent,
+    EditCreateFormComponent,
+    NeedadminComponent,
+    UserEditCreateComponent
   ],
   imports: [
     BrowserModule,
     FontAwesomeModule,
     RouterModule.forRoot(appRoutes),
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    CookieModule.forRoot(),
+    CommonModule,
+    ReactiveFormsModule
   ],
   providers: [CookieService,
     { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },

@@ -1,7 +1,45 @@
-<div>
-  <h5 class="card-title">Sumother</h5>
-  <p class="card-text">other</p>
-  <p>Rating: 80</p>
-  <a href="#" class="btn btn-primary">Modify</a>
-  <a href="#" class="btn btn-danger ml-1">Delete</a>
+<div *ngIf="movie">
+  <h5 class="card-title">{{movie.title}}</h5>
+  <p class="card-text">{{movie.description}}</p>
+  <p>Rating: {{movie.rating}}</p>
+   <div *ngIf="isAdmin">
+    <a href="{{editLink}}" class="btn btn-primary">Modify</a>
+    <button class="btn btn-danger ml-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
+  </div>
+</div>
+
+<div class="disable-background" *ngIf="toggleOverlay">
+  <span id="nav">
+    <div class="spinner" style="display: block; position: fixed">
+    </div>
+  </span>
+  <span id="nav">
+    <div class="submit-message" style="display: block; color: #FFFFFF; position: fixed; left: 49.7%; top: 54.5%;">
+      Saving...
+    </div>
+  </span>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this movie?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="delete()">Yes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!movie">
+  Page not found
 </div>

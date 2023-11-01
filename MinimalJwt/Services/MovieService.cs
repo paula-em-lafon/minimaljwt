@@ -1,14 +1,15 @@
 ﻿using MinimalJwt.Models;
 using MinimalJwt.Repositories;
+using System.Reflection;
 
 namespace MinimalJwt.Services
 {
     public class MovieService : IMovieService
     {
+        private readonly MovieRepository movieRepository = new MovieRepository();
         public Movie Create(Movie movie)
         {
-            movie.Id = MovieRepository.Movies.Count + 1;
-            MovieRepository.Movies.Add(movie);
+            movie = movieRepository.CreateNewMovie(movie);
 
             return movie;
         }
@@ -16,7 +17,7 @@ namespace MinimalJwt.Services
         public Movie Get(int id)
         {
             
-            var movie = MovieRepository.Movies.FirstOrDefault(o => o.Id == id);
+            var movie = movieRepository.GetMovieById(id);
             
             if (movie is null) return null;
             
@@ -25,31 +26,22 @@ namespace MinimalJwt.Services
 
         public List<Movie> List() 
         {
-            var movies = MovieRepository.Movies;
-            
-            return movies;
+            var movies = movieRepository.GetMovies();
+            List<Movie> moviesList = new List<Movie>(movies);
+
+            return moviesList;
         }
 
-        public Movie Update(Movie newMovie) 
+        public Movie Update(int id, Movie oldMovie) 
         {
-            var oldMovie = MovieRepository.Movies.FirstOrDefault(o => o.Id == newMovie.Id);
-
-            if (oldMovie is null) return null;
-
-            oldMovie.Title = newMovie.Title;
-            oldMovie.Description = newMovie.Description;
-            oldMovie.Rating = newMovie.Rating;
+            var newMovie = movieRepository.EditMovie(id, oldMovie);
 
             return newMovie;
         }
 
         public bool Delete(int id) 
         {
-            var oldMovie = MovieRepository.Movies.FirstOrDefault(o => o.Id == id);
-            
-            if (oldMovie is null) return false;
-
-            MovieRepository.Movies.Remove(oldMovie);
+            var newMovie = movieRepository.DeleteMovie(id);
 
             return true;
         }

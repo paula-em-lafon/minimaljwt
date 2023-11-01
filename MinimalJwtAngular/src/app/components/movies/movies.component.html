@@ -1,5 +1,5 @@
 <div *ngIf="movies && movies !==[]">
-  <app-movie-item *ngFor="let movie of movies" [movie]="movie"></app-movie-item>
+  <app-movie-item *ngFor="let movie of movies" [movie]="movie" [isLoggedIn]="isLoggedIn"></app-movie-item>
 </div>
 <div *ngIf="!movies || movies ===[]">
   There was a problem requesting movies

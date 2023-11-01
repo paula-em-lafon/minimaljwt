@@ -7,7 +7,7 @@ namespace MinimalJwt.Services
         public Movie Create(Movie movie);
         public Movie Get(int id);
         public List<Movie> List();
-        public Movie Update(Movie movie);
+        public Movie Update(int id, Movie movie);
         public bool Delete(int id);
     }
 }

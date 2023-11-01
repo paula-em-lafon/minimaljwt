@@ -6,6 +6,11 @@ namespace MinimalJwtAuth.Services
     {
         public User Get(UserLogin userLogin);
         public User GetCurrentUser();
+        public User GetCurrentUserById();
         public string GenerateRefreshToken();
+        public User Create(User user);
+        public User Update(User user);
+        public Boolean Delete();
+        public User MakeReturnable(User user);
     }
 }

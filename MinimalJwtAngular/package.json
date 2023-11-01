@@ -26,6 +26,7 @@
     "bootstrap": "^5.3.0",
     "bootstrap-icons": "^1.10.5",
     "jest-editor-support": "*",
+    "ngx-cookie": "^6.0.1",
     "ngx-cookie-service": "^16.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",

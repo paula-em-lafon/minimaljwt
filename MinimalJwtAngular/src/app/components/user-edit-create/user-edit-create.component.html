@@ -1,0 +1,110 @@
+<h1 *ngIf="isAddMode">Add User</h1>
+<h1 *ngIf="!isAddMode">Edit User</h1>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="form-row">
+    <div class="form-group col-5">
+      <label>User Name</label>
+      <input type="text" formControlName="username" autocomplete="new-username" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.username.errors }" />
+      <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
+        <div *ngIf="f.username.errors.required">First Name is required</div>
+      </div>
+    </div>
+    <div class="form-group col-5">
+      <label>First Name</label>
+      <input type="text" formControlName="givenName" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.givenName.errors }" />
+      <div *ngIf="submitted && f.givenName.errors" class="invalid-feedback">
+        <div *ngIf="f.givenName.errors.required">First Name is required</div>
+      </div>
+    </div>
+    <div class="form-group col-5">
+      <label>Last Name</label>
+      <input type="text" formControlName="surname" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.surname.errors }" />
+      <div *ngIf="submitted && f.surname.errors" class="invalid-feedback">
+        <div *ngIf="f.surname.errors.required">Last Name is required</div>
+      </div>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group col-7">
+      <label>Email</label>
+      <input type="text" formControlName="emailAddress" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.emailAddress.errors }" />
+      <div *ngIf="submitted && f.emailAddress.errors" class="invalid-feedback">
+        <div *ngIf="f.emailAddress.errors.required">Email is required</div>
+        <div *ngIf="f.emailAddress.errors.email">Email must be a valid email address</div>
+      </div>
+    </div>
+    <div class="form-group col">
+      <label>Role</label>
+      <select formControlName="role" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.role.errors }">
+        <option value=""></option>
+        <option value="Standard">Standard</option>
+        <option value="Administrator">Administrator</option>
+      </select>
+      <div *ngIf="submitted && f.role.errors" class="invalid-feedback">
+        <div *ngIf="f.role.errors.required">Role is required</div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="!isAddMode">
+    <h3 class="pt-3">Change Password</h3>
+    <p>Leave blank to keep the same password</p>
+  </div>
+  <div class="form-row">
+    <div class="form-group col">
+      <label>Password</label>
+      <input type="password" formControlName="password" autocomplete="new-password" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.password.errors }" />
+      <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+        <div *ngIf="f.password.errors.required">Password is required</div>
+        <div *ngIf="f.password.errors.minlength">Password must be at least 6 characters</div>
+      </div>
+    </div>
+    <div class="form-group col">
+      <label>Confirm Password</label>
+      <input type="password" formControlName="confirmPassword" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.confirmPassword.errors }" />
+      <div *ngIf="submitted && f.confirmPassword.errors" class="invalid-feedback">
+        <div *ngIf="f.confirmPassword.errors.required">Confirm Password is required</div>
+        <div *ngIf="f.confirmPassword.errors.mustMatch">Passwords must match</div>
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <button [disabled]="loading" class="btn btn-primary ml-1">
+      <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+      Save
+    </button>
+    <a routerLink="/" class="btn btn-secondary ml-1">Cancel</a>
+    <button type="button" class="btn btn-danger ml-1" data-toggle="modal" data-target="#deleteModal">Delete User</button>
+  </div>
+
+  <div class="disable-background" *ngIf="toggleOverlay">
+    <span id="nav">
+      <div class="spinner" style="display: block; position: fixed">
+      </div>
+    </span>
+    <span id="nav">
+      <div class="submit-message" style="display: block; color: #FFFFFF; position: fixed; left: 49.7%; top: 54.5%;">
+        Saving...
+      </div>
+    </span>
+  </div>
+
+  <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to delete Your user?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="delete()">Yes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

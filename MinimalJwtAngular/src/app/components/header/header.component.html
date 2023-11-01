@@ -6,10 +6,10 @@
     <div id="theMenu" class="navbar-collapse collapse">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item">
-          <a class="nav-link" href="#">Home</a>
+          <a class="nav-link" href="/">Home</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Create a Movie</a>
+        <li class="nav-item" *ngIf="isAdmin">
+          <a class="nav-link" href="/movie/create">Create a Movie</a>
         </li>
       </ul>
       <app-login></app-login>
