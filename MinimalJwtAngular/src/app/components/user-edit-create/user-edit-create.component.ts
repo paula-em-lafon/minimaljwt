@@ -97,6 +97,7 @@ export class UserEditCreateComponent {
       this.createUser();
     }
     else {
+      console.log(this.form.value)
       this.updateuser();
     }
   }
@@ -119,19 +120,8 @@ export class UserEditCreateComponent {
     this.userService.updateUser(this.form.value)
       .subscribe({
         next: () => {
-          this.userService.tryRefreshingTokens()
-            .then((success) => {
-              if (success) {
-                alert('User updated');
-                this.router.navigate(['/']);
-              }
-              else {
-                alert('Due to an error you have been logged out, try logging in with your new credentials');
-                this.storageService.clean();
-                this.storageService.setValueLoggedIn(false);
-                this.router.navigate(['/']);
-              }
-            });
+          alert('User updated');
+          this.router.navigate(['/']);
         },
         error: (error: any) => {
           alert(error.error);

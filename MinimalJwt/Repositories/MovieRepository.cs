@@ -10,8 +10,12 @@ namespace MinimalJwt.Repositories
 {
     public class MovieRepository : IMovie
     {
-        private readonly string CS = ConfigurationManager.ConnectionStrings["MoviesContextDb"].ConnectionString;
+        private readonly string CS;
 
+        public MovieRepository(string connectionString)
+        {
+            CS = connectionString;
+        }
 
         public IList<Movie> GetMovies()
         {

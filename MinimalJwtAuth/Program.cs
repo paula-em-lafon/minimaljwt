@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MinimalJwtAuth.Exceptions;
 using MinimalJwtAuth.Models;
+using MinimalJwtAuth.Repositories;
 using MinimalJwtAuth.Services;
 using System.Dynamic;
 using System.IdentityModel.Tokens.Jwt;
@@ -14,6 +16,8 @@ using System.Text;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+var configuration = builder.Configuration;
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -83,8 +87,12 @@ var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 //});
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-builder.Services.AddSingleton<IUserService, UserService>();
+builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
+
+builder.Services.AddTransient<IUserRepository>(provider =>
+    new UserRepository(configuration.GetConnectionString("MoviesContextDb")));
+
+builder.Services.AddTransient<IUserService, UserService>();
 
 var app = builder.Build();
 
@@ -155,7 +163,7 @@ IResult Login(UserLogin user, IUserService service)
         {
             new Claim(ClaimTypes.Sid, loggedInUser.Id.ToString()),
             new Claim(ClaimTypes.NameIdentifier, loggedInUser.Username),
-            new Claim(ClaimTypes.Email, loggedInUser.EmailAddress),
+            new Claim(ClaimTypes.Email, loggedInUser.Username),
             new Claim(ClaimTypes.GivenName, loggedInUser.GivenName),
             new Claim(ClaimTypes.Surname, loggedInUser.Surname),
             new Claim(ClaimTypes.Role, loggedInUser.Role)
@@ -175,16 +183,15 @@ IResult Login(UserLogin user, IUserService service)
 
         var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
-        loggedInUser.RefreshToken = service.GenerateRefreshToken();
-        loggedInUser.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
+        var tokens = service.SaveTokens(loggedInUser);
 
         var returnable = new LoggedIn
         {
             Id = loggedInUser.Id,
             Token = tokenString,
             TokenExpiry = tokenExpiry,
-            RefreshToken = loggedInUser.RefreshToken,
-            RefreshTokenExpiry = loggedInUser.RefreshTokenExpiryTime,
+            RefreshToken = tokens.RefreshToken,
+            RefreshTokenExpiry = tokens.RefreshTokenExpiryTime,
             Role = loggedInUser.Role,
             UserName = loggedInUser.Username,
             GivenName = loggedInUser.GivenName,
@@ -211,7 +218,7 @@ IResult RefreshToken(OldRefreshToken oldRefreshToken, IUserService service)
         {
             new Claim(ClaimTypes.Sid, loggedInUser.Id.ToString()),
             new Claim(ClaimTypes.NameIdentifier, loggedInUser.Username),
-            new Claim(ClaimTypes.Email, loggedInUser.EmailAddress),
+            new Claim(ClaimTypes.Email, loggedInUser.Username),
             new Claim(ClaimTypes.GivenName, loggedInUser.GivenName),
             new Claim(ClaimTypes.Surname, loggedInUser.Surname),
             new Claim(ClaimTypes.Role, loggedInUser.Role)
@@ -231,16 +238,15 @@ IResult RefreshToken(OldRefreshToken oldRefreshToken, IUserService service)
 
     var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
-    loggedInUser.RefreshToken = service.GenerateRefreshToken();
-    loggedInUser.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
+    var tokens = service.SaveTokens(loggedInUser);
 
     var returnable = new LoggedIn
     {
         Id = loggedInUser.Id,
         Token = tokenString,
         TokenExpiry = tokenExpiry,
-        RefreshToken = loggedInUser.RefreshToken,
-        RefreshTokenExpiry = loggedInUser.RefreshTokenExpiryTime,
+        RefreshToken = tokens.RefreshToken,
+        RefreshTokenExpiry = tokens.RefreshTokenExpiryTime,
         Role = loggedInUser.Role,
         UserName = loggedInUser.Username,
         GivenName = loggedInUser.GivenName,

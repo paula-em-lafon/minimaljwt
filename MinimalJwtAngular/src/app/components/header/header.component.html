@@ -11,6 +11,12 @@
         <li class="nav-item" *ngIf="isAdmin">
           <a class="nav-link" href="/movie/create">Create a Movie</a>
         </li>
+        <li class="nav-item" *ngIf="isLoggedIn">
+          <a class="nav-link" href="/user">Modfiy User</a>
+        </li>
+        <li class="nav-item" *ngIf="!isLoggedIn">
+          <a class="nav-link" href="/user">Create User</a>
+        </li>
       </ul>
       <app-login></app-login>
     </div>

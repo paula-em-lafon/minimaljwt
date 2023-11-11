@@ -8,11 +8,13 @@ import { EditCreateFormComponent } from './components/edit-create-form/edit-crea
 import { UserEditCreateComponent } from './components/user-edit-create/user-edit-create.component'
 import { AdminguardService } from './services/adminguard.service';
 import { NeedadminComponent } from './components/needadmin/needadmin.component';
+import { HomeAuthguardService } from './services/homeauthguard.service';
 
 const appRoutes: Routes = [
   {
     path: '',
     component: MoviesComponent,
+    canActivate: [HomeAuthguardService],
     pathMatch: 'full'
   },
   {
@@ -46,6 +48,7 @@ const appRoutes: Routes = [
   {
     path: 'user',
     component: UserEditCreateComponent,
+    canActivate: [HomeAuthguardService],
     pathMatch: 'full'
   },
   {

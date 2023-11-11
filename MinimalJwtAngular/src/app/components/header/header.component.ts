@@ -9,6 +9,7 @@ import { StorageService } from '../../services/storage.service';
 export class HeaderComponent implements OnInit {
 
   isAdmin = false;
+  isLoggedIn = false;
 
   constructor(private storageService: StorageService) { }
 
@@ -16,6 +17,8 @@ export class HeaderComponent implements OnInit {
     this.storageService.getValueIsAdmin().subscribe(value => {
       this.isAdmin = value;
     });
-    console.log(this.isAdmin);
+    this.storageService.getValueLoggedIn().subscribe(value => {
+      this.isLoggedIn = value;
+    });
   }
 }

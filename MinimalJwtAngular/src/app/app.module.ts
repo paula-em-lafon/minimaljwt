@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router'
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { HttpClientModule } from '@angular/common/http'
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CookieService } from 'ngx-cookie-service';
 
@@ -21,6 +21,7 @@ import { EditCreateFormComponent } from './components/edit-create-form/edit-crea
 import { CommonModule } from '@angular/common';
 import { NeedadminComponent } from './components/needadmin/needadmin.component';
 import { UserEditCreateComponent } from './components/user-edit-create/user-edit-create.component';
+import { TokenInterceptor } from './RefreshInterceptor';
 
 @NgModule({
   declarations: [
@@ -47,7 +48,12 @@ import { UserEditCreateComponent } from './components/user-edit-create/user-edit
   ],
   providers: [CookieService,
     { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },
-    JwtHelperService],
+    JwtHelperService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
+      multi: true,
+    },],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

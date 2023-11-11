@@ -2,18 +2,26 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using MinimalJwt.Models;
+using MinimalJwt.Repositories;
 using MinimalJwt.Services;
+using System.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration;
 
-var connectionString = builder.Configuration.GetSection("ConnectionStrings")["MoviesContextDb"].ToString();
+builder.Services.AddTransient<IMovie>(provider =>
+    new MovieRepository(configuration.GetConnectionString("MoviesContextDb")));
+
+builder.Services.AddTransient<IMovieService, MovieService>();
+
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -76,7 +84,7 @@ builder.Services.AddCors();
 builder.Services.AddAuthorization();
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSingleton<IMovieService, MovieService>();
+/*builder.Services.AddSingleton<IMovieService, MovieService>();*/
 //builder.Services.AddSingleton<IUserService, UserService>();
 
 var app = builder.Build();

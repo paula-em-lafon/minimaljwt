@@ -6,10 +6,15 @@ namespace MinimalJwt.Services
 {
     public class MovieService : IMovieService
     {
-        private readonly MovieRepository movieRepository = new MovieRepository();
+        private readonly IMovie _movieRepository;
+
+        public MovieService(IMovie movieRepository)
+        {
+            _movieRepository = movieRepository;
+        }
         public Movie Create(Movie movie)
         {
-            movie = movieRepository.CreateNewMovie(movie);
+            movie = _movieRepository.CreateNewMovie(movie);
 
             return movie;
         }
@@ -17,7 +22,7 @@ namespace MinimalJwt.Services
         public Movie Get(int id)
         {
             
-            var movie = movieRepository.GetMovieById(id);
+            var movie = _movieRepository.GetMovieById(id);
             
             if (movie is null) return null;
             
@@ -26,7 +31,7 @@ namespace MinimalJwt.Services
 
         public List<Movie> List() 
         {
-            var movies = movieRepository.GetMovies();
+            var movies = _movieRepository.GetMovies();
             List<Movie> moviesList = new List<Movie>(movies);
 
             return moviesList;
@@ -34,14 +39,14 @@ namespace MinimalJwt.Services
 
         public Movie Update(int id, Movie oldMovie) 
         {
-            var newMovie = movieRepository.EditMovie(id, oldMovie);
+            var newMovie = _movieRepository.EditMovie(id, oldMovie);
 
             return newMovie;
         }
 
         public bool Delete(int id) 
         {
-            var newMovie = movieRepository.DeleteMovie(id);
+            var newMovie = _movieRepository.DeleteMovie(id);
 
             return true;
         }

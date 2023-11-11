@@ -5,6 +5,7 @@ namespace MinimalJwtAuth.Services
     public interface IUserService
     {
         public User Get(UserLogin userLogin);
+        public NewRefreshToken SaveTokens(User user);
         public User GetCurrentUser();
         public User GetCurrentUserById();
         public string GenerateRefreshToken();

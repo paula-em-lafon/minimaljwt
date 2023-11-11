@@ -6,22 +6,23 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using MinimalJwtAuth.Exceptions;
 using Microsoft.AspNetCore.Authentication.OAuth.Claims;
-
+using System.Data.SqlClient;
+using System.Text.RegularExpressions;
 namespace MinimalJwtAuth.Services
 {
     public class UserService : IUserService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IUserRepository _userRepository;
 
-
-
-        public UserService(IHttpContextAccessor httpContextAccessor) 
+        public UserService(IHttpContextAccessor httpContextAccessor, IUserRepository userRepository) 
         {
             _httpContextAccessor = httpContextAccessor;
+            _userRepository = userRepository;
         }
         public User Get(UserLogin userLogin)
         {
-            User user = UserRepository.Users.FirstOrDefault(o => o.Username.Equals(userLogin.Username, StringComparison.OrdinalIgnoreCase) && o.Password.Equals(userLogin.Password));
+            User user = _userRepository.Login(userLogin);
 
             return user;
         }
@@ -35,7 +36,8 @@ namespace MinimalJwtAuth.Services
         public User GetCurrentUserById()
         {
             var id = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Sid);
-            User user = UserRepository.Users.FirstOrDefault(o => o.Id.Equals(Int32.Parse(id)));
+            if (id == null) { return null; }
+            User user = _userRepository.GetCurrentUserById(Int32.Parse(id));
             return user;
         }
         public string GenerateRefreshToken()
@@ -47,66 +49,61 @@ namespace MinimalJwtAuth.Services
                 return Convert.ToBase64String(randomNumber);
             }
         }
+        public NewRefreshToken SaveTokens(User user) 
+        {
+            var newTokens = new NewRefreshToken();
+            newTokens.RefreshToken = GenerateRefreshToken();
+            newTokens.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
+            newTokens = _userRepository.CreateRefreshToken(user.Id, newTokens);
+            return newTokens;
+        }
         public User Create(User user)
         {
-            User userNameAlready = UserRepository.Users.FirstOrDefault(o => o.Username.Equals(user.Username, StringComparison.OrdinalIgnoreCase));
-            User emailAlready = UserRepository.Users.FirstOrDefault(o => o.EmailAddress.Equals(user.EmailAddress, StringComparison.OrdinalIgnoreCase));
-            if (userNameAlready != null && emailAlready != null) {
-                throw new UserException("Username and Email already exist");
+            try 
+            { 
+                _userRepository.CreateNewUser(user);
             }
-            else if (userNameAlready != null)
+            catch (SqlException ex)
             {
-                throw new UserException("Username already exists");
+                if (ex.Number == 2627)
+                {
+                   
+                    throw new UserException("Username and email must be unique");
+                }
             }
-            else if (emailAlready != null)
-            {
-                throw new UserException("Email is Already in use");
-            }
-            UserRepository.Users.Add(user);
             return user;
         }
 
-        public User Update(User newUser)
+        public User Update(User oldUser)
         {
-            User oldUser = this.GetCurrentUserById();
-            if (oldUser == null)
+            var userToModify = GetCurrentUserById();
+            if (userToModify == null)
             {
-                throw new UserException("Current user couldn't be found ");
+                throw new UserException("Current user invalid");
             }
-            User userNameAlready = UserRepository.Users.FirstOrDefault(o => o.Username.Equals(newUser.Username, StringComparison.OrdinalIgnoreCase));
-            User emailAlready = UserRepository.Users.FirstOrDefault(o => o.EmailAddress.Equals(newUser.EmailAddress, StringComparison.OrdinalIgnoreCase));
-            if ((userNameAlready != null && newUser.Username!= oldUser.Username) && (emailAlready != null && newUser.EmailAddress != oldUser.EmailAddress))
+            var newUser = new User();
+            oldUser.Id = userToModify.Id;
+            try
             {
-                throw new UserException("Username and Email already exist");
+                newUser = _userRepository.UpdateUser(oldUser);
             }
-            else if (userNameAlready != null && newUser.Username != oldUser.Username)
+            catch (SqlException ex)
             {
-                throw new UserException("Username already exists");
-            }
-            else if (emailAlready != null && newUser.EmailAddress != oldUser.EmailAddress)
-            {
-                throw new UserException("Email is Already in use");
-            }
+                if (ex.Number == 2627)
+                {
 
-            oldUser.Username = newUser.Username;
-            oldUser.EmailAddress = newUser.EmailAddress;
-            oldUser.Surname = newUser.Surname;
-            oldUser.GivenName = newUser.GivenName;
-            oldUser.Role = newUser.Role;
-            if (!string.IsNullOrWhiteSpace(newUser.Password))
-            {
-                oldUser.Password = newUser.Password;
+                    throw new UserException("Username and email must be unique");
+                }
             }
-            var returnable = this.MakeReturnable(oldUser);
-            return returnable;
+            return newUser;
         }
 
-        public Boolean Delete() 
+        public bool Delete() 
         {
             User user = this.GetCurrentUserById();
             if (user is null) return false;
 
-            UserRepository.Users.Remove(user);
+            _userRepository.DeleteUser(user);
             return true;
         }
 
